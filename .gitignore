@@ -2,3 +2,5 @@ obj
 obj/*
 conci
 concc
+*/*.swp
+*.swp
