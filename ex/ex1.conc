@@ -1,7 +1,12 @@
-proc loop_test do
+; Example 1 : Factorial
+proc factorial do
 	-> n
-	n .
-	?(n 10 <) (n 1 + loop_test), 0
+
+	; If n == 0, return 1
+	?(n 0 =) 1
+
+	; Otherwise, return n * (n-1)!
+	,(n 1 - factorial n *)
 end
 
-0 loop_test
+10 factorial .

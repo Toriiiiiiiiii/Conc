@@ -19,6 +19,17 @@ variable_t *get_var(scope_t *scope, char *identifier)
 	return get_var(scope->parent, identifier);
 }
 
+uint64_t stk_pop(runtime_t *r)
+{
+	if(r->stack_ptr == 0) {
+		printf("[ERROR] Stack underflow.\n");
+		exit(1);
+	}
+
+	r->stack_ptr--;
+	return r->stack[r->stack_ptr];
+}
+
 void set_var(scope_t *scope, char *identifier, uint64_t value)
 {
 	variable_t *var = get_var(scope, identifier);
@@ -63,9 +74,9 @@ void _run_node(runtime_t *r, operation_t opr, scope_t *scope)
 		r->stack_ptr++;
 	} else if(opr.type == OPR_BINARY)
 	{
-		uint64_t b = r->stack[r->stack_ptr - 1];
-		uint64_t a = r->stack[r->stack_ptr - 2];
-		r->stack_ptr -= 1;
+		uint64_t b = stk_pop(r);
+		uint64_t a = stk_pop(r);
+		r->stack_ptr += 1;
 
 		switch(opr.value[0]) {
 			case '+':
@@ -94,8 +105,8 @@ void _run_node(runtime_t *r, operation_t opr, scope_t *scope)
 				break;
 		}
 	} else if(opr.type == OPR_UNARY) {
-		uint64_t a = r->stack[r->stack_ptr - 1];
-		r->stack_ptr++;
+		uint64_t a = stk_pop(r);
+		r->stack_ptr += 2;
 
 		switch(opr.value[0]) {
 			case ':':
@@ -103,8 +114,7 @@ void _run_node(runtime_t *r, operation_t opr, scope_t *scope)
 		}
 	} else if(opr.type == OPR_PRINT)
 	{
-		printf("%lu\n", r->stack[r->stack_ptr - 1]);
-		r->stack_ptr--;
+		printf("%lu\n", stk_pop(r));
 	} else if(opr.type == OPR_KEYWORD)
 	{
 		variable_t *var = get_var(scope, opr.value);

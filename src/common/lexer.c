@@ -62,11 +62,12 @@ void lex_number(lexer_t *lex)
 	tok.value = malloc(25);
 
 	int i = 0;
-	char c = lex_consume(lex);
+	char c = lex->buffer[lex->offset];
 	while(lex->offset < lex->len && i < 24 && contains("0124356789", c))
 	{
+		lex_consume(lex);
 		tok.value[i] = c;
-		c = lex_consume(lex);
+		c = lex->buffer[lex->offset];
 		i++;
 	}
 

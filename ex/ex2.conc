@@ -1,0 +1,14 @@
+; Ex 2 : Fibonacci
+
+; n fibonacci --> Computes the (n+1)th fibonacci number
+;                 eg: 10 fibonacci = 11th fibonacci number (89)
+proc fibonacci do
+	-> n
+
+	?(n 2 <) 1,
+	(n 1 - fibonacci
+	 n 2 - fibonacci
+	 +)
+end
+
+10 fibonacci .
