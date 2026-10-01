@@ -8,7 +8,7 @@
  */
 
 #include <stdio.h>
-#include "../common/concb.h"
+#include "../common/file.h"
 #include "../common/lexer.h"
 #include "../common/parser.h"
 #include "runtime.h"
@@ -33,14 +33,24 @@ int main(int argc, char** argv)
 	while(!lex_token(lex));
 
 	parser_t *par = create_parser(lex->tokens);
-	while(!parse_opr(par));
+	int res = 0;
+	while(!(res = parse_opr(par)));
+
+	if(res == 2) return 1;
 
 	runtime_t *rt = create_runtime(par->root);
 	run_program(rt);
+
+	int returnCode = 0;
+
+	if(rt->stack_ptr > 0)
+		returnCode = rt->stack[rt->stack_ptr - 1];
+
+	printf("[Exit with code %d]\n", returnCode);
 
 	destroy_lexer(lex);
 	destroy_parser(par);
 	destroy_runtime(rt);
 	free(contents);
-	return 0;
+	return returnCode;
 }

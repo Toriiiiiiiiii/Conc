@@ -10,6 +10,10 @@ enum _operation_type_t
 	OPR_BINARY,
 	OPR_UNARY,
 	OPR_PRINT,
+	OPR_KEYWORD,
+	OPR_PROC,
+	OPR_ASSIGN,
+	OPR_IF,
 };
 
 typedef enum _operation_type_t operation_type_t;

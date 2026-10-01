@@ -10,8 +10,13 @@ enum _token_type_t
 	TOK_EOF,
 	TOK_INT,
 	TOK_OPERATOR,
+	TOK_UNARY,
 	TOK_KEYWORD,
 	TOK_PRINT,
+	TOK_IF,
+	TOK_ELSE,
+	TOK_LPAREN,
+	TOK_RPAREN,
 };
 
 typedef enum _token_type_t token_type_t;

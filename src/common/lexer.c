@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include <ctype.h>
 
 lexer_t *create_lexer(size_t file, char *buffer, size_t len)
 {
@@ -74,6 +75,31 @@ void lex_number(lexer_t *lex)
 	da_push(lex->tokens, tok, token_t);
 }
 
+void lex_keyword(lexer_t *lex)
+{
+	token_t tok = {0};
+	tok.file = lex->file;
+	tok.line = lex->line;
+	tok.col = lex->col;
+
+	tok.type = TOK_KEYWORD;
+	tok.value = malloc(25);
+
+	int i = 0;
+	char c = lex->buffer[lex->offset];
+	while(lex->offset < lex->len && i < 24 && (isalnum(c) || contains("_.", c)))
+	{
+		lex_consume(lex);
+		tok.value[i] = c;
+		c = lex->buffer[lex->offset];
+		i++;
+	}
+
+	tok.value[i] = 0;
+	tok.len = strlen(tok.value);
+	da_push(lex->tokens, tok, token_t);
+}
+
 void lex_operation(lexer_t *lex)
 {
 	token_t tok = {0};
@@ -85,11 +111,37 @@ void lex_operation(lexer_t *lex)
 	tok.value = malloc(25);
 
 	int i = 0;
-	char c = lex_consume(lex);
-	while(lex->offset < lex->len && i < 24 && contains("+-*/&^><!~", c))
+	char c = lex->buffer[lex->offset];
+	while(lex->offset < lex->len && i < 24 && contains("+-*/&^><%=", c))
 	{
+		lex_consume(lex);
 		tok.value[i] = c;
-		c = lex_consume(lex);
+		c = lex->buffer[lex->offset];
+		i++;
+	}
+
+	tok.value[i] = 0;
+	tok.len = strlen(tok.value);
+	da_push(lex->tokens, tok, token_t);
+}
+
+void lex_unary(lexer_t *lex)
+{
+	token_t tok = {0};
+	tok.file = lex->file;
+	tok.line = lex->line;
+	tok.col = lex->col;
+
+	tok.type = TOK_UNARY;
+	tok.value = malloc(25);
+
+	int i = 0;
+	char c = lex->buffer[lex->offset];
+	while(lex->offset < lex->len && i < 24 && contains(":@$!~", c))
+	{
+		lex_consume(lex);
+		tok.value[i] = c;
+		c = lex->buffer[lex->offset];
 		i++;
 	}
 
@@ -105,6 +157,11 @@ int lex_token(lexer_t *lex)
 	while(!contains(" \t\n", c))
 	{
 		c = lex->buffer[lex->offset];
+
+		if(c == ';') {
+			while(c != '\n' && c != '\0') c = lex_consume(lex);
+			return 0;
+		}
 
 		if(c == 0) {
 			token_t tok = {0};
@@ -124,8 +181,16 @@ int lex_token(lexer_t *lex)
 			lex_number(lex);
 			return 0;
 		}
-		else if(contains("+-*/&^><!~", c)) {
+		else if(contains("+-*/&^><!~%=", c)) {
 			lex_operation(lex);
+			return 0;
+		}
+		else if(contains(":@$!~", c)) {
+			lex_unary(lex);
+			return 0;
+		}
+		else if(isalpha(c) || c == '_') {
+			lex_keyword(lex);
 			return 0;
 		}
 
@@ -138,6 +203,54 @@ int lex_token(lexer_t *lex)
 			tok.len = 0;
 			tok.value = NULL;
 			tok.type = TOK_PRINT;
+
+			da_push(lex->tokens, tok, token_t);
+		}
+		else if(c == '?') {
+			token_t tok = {0};
+
+			tok.file = lex->file;
+			tok.line = lex->line;
+			tok.col = lex->col;
+			tok.len = 0;
+			tok.value = NULL;
+			tok.type = TOK_IF;
+
+			da_push(lex->tokens, tok, token_t);
+		}
+		else if(c == ',') {
+			token_t tok = {0};
+
+			tok.file = lex->file;
+			tok.line = lex->line;
+			tok.col = lex->col;
+			tok.len = 0;
+			tok.value = NULL;
+			tok.type = TOK_ELSE;
+
+			da_push(lex->tokens, tok, token_t);
+		}
+		else if(c == '(') {
+			token_t tok = {0};
+
+			tok.file = lex->file;
+			tok.line = lex->line;
+			tok.col = lex->col;
+			tok.len = 0;
+			tok.value = NULL;
+			tok.type = TOK_LPAREN;
+
+			da_push(lex->tokens, tok, token_t);
+		}
+		else if(c == ')') {
+			token_t tok = {0};
+
+			tok.file = lex->file;
+			tok.line = lex->line;
+			tok.col = lex->col;
+			tok.len = 0;
+			tok.value = NULL;
+			tok.type = TOK_RPAREN;
 
 			da_push(lex->tokens, tok, token_t);
 		}
