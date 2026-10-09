@@ -17,6 +17,7 @@ enum _token_type_t
 	TOK_ELSE,
 	TOK_LPAREN,
 	TOK_RPAREN,
+	TOK_STRING,
 };
 
 typedef enum _token_type_t token_type_t;

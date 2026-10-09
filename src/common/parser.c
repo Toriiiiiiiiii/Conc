@@ -131,6 +131,12 @@ int _parse(parser_t *par, operation_t *parent)
 				t.len, t.value, parent, da_create(operation_t)
 			};
 			break;
+		case TOK_STRING:
+			opr = (operation_t){
+				t.file, t.line, t.col, OPR_PUSH_STRING,
+				t.len, t.value, parent, da_create(operation_t)
+			};
+			break;
 		case TOK_UNARY:
 			opr = (operation_t){
 				t.file, t.line, t.col, OPR_UNARY,

@@ -44,6 +44,7 @@ runtime_t *create_runtime(operation_t *program)
 	rt->heap = malloc(HEAP_SIZE * sizeof(uint64_t));
 
 	rt->stack_ptr = 0;
+	rt->heap_ptr = 0;
 	rt->root = program;
 
 	rt->fns = da_create(operation_t);
@@ -106,17 +107,32 @@ void _run_node(runtime_t *r, operation_t opr, scope_t *scope)
 		}
 	} else if(opr.type == OPR_UNARY) {
 		uint64_t a = stk_pop(r);
-		r->stack_ptr += 2;
+		r->stack_ptr += 1;
 
 		switch(opr.value[0]) {
 			case ':':
 				r->stack[r->stack_ptr - 1] = a;
+				break;
+			case '#':
+				r->stack[r->stack_ptr - 1] = r->heap[a];
+				break;
+			case '$':
+				printf("%c", (char)a);
+				break;
 		}
 	} else if(opr.type == OPR_PRINT)
 	{
 		printf("%lu\n", stk_pop(r));
 	} else if(opr.type == OPR_KEYWORD)
 	{
+		if(strcmp(opr.value, "dump") == 0) {
+			for(int i = r->stack_ptr-1; i >= 0; --i) {
+				printf("%lu\n", r->stack[i]);
+			}
+			printf("\n");
+			return;
+		}
+
 		variable_t *var = get_var(scope, opr.value);
 		if(var)
 		{
@@ -167,6 +183,21 @@ void _run_node(runtime_t *r, operation_t opr, scope_t *scope)
 		scope_t *new_scope = create_scope(scope);
 		if(r->stack[r->stack_ptr]) _run_node(r, da_peek(opr.children, 1, operation_t), new_scope);
 		else if(opr.children.nmem >= 3) _run_node(r, da_peek(opr.children, 2, operation_t), new_scope);
+	} else if(opr.type == OPR_PUSH_STRING)
+	{
+		// Put string literal into the heap
+		size_t addr = r->heap_ptr;
+		for(int i = 0; i < opr.len; ++i)
+		{
+			r->heap[r->heap_ptr+i] = opr.value[i];
+		}
+
+		r->heap_ptr += opr.len + 1;
+		r->heap[r->heap_ptr-1] = 0;
+
+		// Push string address to the stack
+		r->stack[r->stack_ptr] = addr;
+		r->stack_ptr++;
 	}
 }
 

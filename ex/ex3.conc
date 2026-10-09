@@ -1,0 +1,36 @@
+"Hello, World\n" -> string
+"Jello, World\n" -> string2
+
+proc strlen do
+	-> s
+
+	?(s # 0 =) 1,
+	(s 1 + strlen 1 +)
+end
+
+proc puts do
+	-> s
+
+	?(s # 0 =) 0,
+	(s # $
+	 s 1 + puts)
+end
+
+proc streq do
+	-> b
+	-> a
+
+	; len(a) == len(b)?
+	?(a strlen b strlen =) (
+		; end of string a?
+		?(a # 0 =) 1, (
+			; a[i] == b[i]?
+			?(a # b # =) (a 1 + b 1 + streq),
+			0
+		)
+	),
+	0
+end
+
+string string2 streq .
+string string streq .

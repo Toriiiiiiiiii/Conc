@@ -11,4 +11,4 @@ proc fibonacci do
 	 +)
 end
 
-10 fibonacci .
+10 fibonacci :.

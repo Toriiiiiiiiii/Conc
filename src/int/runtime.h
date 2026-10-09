@@ -29,6 +29,7 @@ struct _runtime_t
 	uint64_t *heap;
 
 	size_t stack_ptr;
+	size_t heap_ptr;
 
 	operation_t *root;
 	dynamic_array_t fns;
