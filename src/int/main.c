@@ -2,8 +2,8 @@
  * CONCI - Conc Interpreter
  *
  *   Start Date   - 2026-09-25
- *   Last Updated - 2026-09-25
- *   Version      - 0.0.1
+ *   Last Updated - 2026-10-09
+ *   Version      - 0.1.0
  *   Contributors - Tori A. Hall (toriahall@gmail.com)
  */
 
