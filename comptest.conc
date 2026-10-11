@@ -1,0 +1,6 @@
+proc factorial do
+	?(: 1 <) (@ 1),
+	(: 1 - factorial *)
+end
+
+10 factorial .

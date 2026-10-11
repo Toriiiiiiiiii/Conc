@@ -11,6 +11,7 @@
 #include "../common/file.h"
 #include "../common/lexer.h"
 #include "../common/parser.h"
+#include "asm_generator.h"
 
 int main(int argc, char **argv)
 {
@@ -37,8 +38,12 @@ int main(int argc, char **argv)
 
 	if(res == 2) return 1;
 
+	asmgen_t *g = create_generator(par->root, argv[2]);
+	translate(g);
+
 	destroy_lexer(lex);
 	destroy_parser(par);
+	destroy_generator(g);
 	free(contents);
 	return 0;
 }

@@ -1,12 +1,5 @@
-; TODO: DELETE
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-format elf64 executable
-
-segment readable executable
-entry main
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Conc compiled program utilities
+format elf64
+section '.text' executable
 
 ; Prints an integer from %rdi
 print_int:
@@ -26,6 +19,23 @@ print_int:
 	sub rsp, 42
 	mov rdi, rsp
 	mov rsi, rdi
+
+.clear:
+	push rdi
+	push rsi
+	push rax
+
+	mov rax, 0
+	add rsi, 42
+.clearlp:
+	mov [rdi], al
+	inc rdi
+	cmp rdi, rsi
+	jne .clearlp
+.clear_dn:
+	pop rax
+	pop rsi
+	pop rdi
 
 	; rdi = base of the string
 	; rsi = next char index
@@ -91,20 +101,12 @@ print_int:
 	pop rbp
 	ret
 
-; TODO: DELETE
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-main:
+public _start
+
+_start:
 	push rbp
 	mov rbp, rsp
 
-	mov rdi, 9876543210
-	call print_int
-
-	mov rax, 60
-	mov rdi, 0
-	syscall
-
-	mov rsp, rbp
-	pop rbp
-	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	; AUTO-GENERATED CODE
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
