@@ -2,8 +2,8 @@
  * CONCC - Conc Compiler
  *
  *   Start Date   - 2026-10-10
- *   Last Updated - 2026-10-10
- *   Version      - 0.0.1
+ *   Last Updated - 2026-10-11
+ *   Version      - 0.0.2
  *   Contributors - Tori A. Hall (toriahall@gmail.com)
  */
 
