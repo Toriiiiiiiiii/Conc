@@ -107,34 +107,35 @@ _start:
 	push rbp
 	mov rbp, rsp
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	; AUTO-GENERATED CODE
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	mov rax, 10
-	call stk_push
-	call FN_factorial
+	call FN_main
+
 	call stk_pop
 	mov rdi, rax
-	call print_int
-	mov rdi, 0
 	mov rax, 60
 	syscall
+	
 	mov rsp, rbp
 	pop rbp
 	ret
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	; AUTO-GENERATED CODE
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FN_factorial:
 	push rbp
 	mov rbp, rsp
+	sub rsp, 8
 	call stk_pop
+	mov [rsp+0], rax
+	mov rax, [rsp+0]
 	call stk_push
-	call stk_push
-	mov rax, 1
+	mov rax, 0
 	call stk_push
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
 	cmp rax, rdi
-	jge FL_0
+	jne FL_0
 	mov rax, 1
 	call stk_push
 	jmp CMP_0_DN
@@ -145,13 +146,11 @@ CMP_0_DN:
 	call stk_pop
 	cmp rax, 0
 	je ELSE_0
-	call stk_pop
 	mov rax, 1
 	call stk_push
 	jmp END_0
 ELSE_0:
-	call stk_pop
-	call stk_push
+	mov rax, [rsp+0]
 	call stk_push
 	mov rax, 1
 	call stk_push
@@ -161,12 +160,121 @@ ELSE_0:
 	sub rax, rdi
 	call stk_push
 	call FN_factorial
+	mov rax, [rsp+0]
+	call stk_push
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
 	mul rdi
 	call stk_push
 END_0:
+	mov rsp, rbp
+	pop rbp
+	ret
+FN_fib:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 8
+	call stk_pop
+	mov [rsp+0], rax
+	mov rax, [rsp+0]
+	call stk_push
+	mov rax, 2
+	call stk_push
+	call stk_pop
+	mov rdi, rax
+	call stk_pop
+	cmp rax, rdi
+	jge FL_1
+	mov rax, 1
+	call stk_push
+	jmp CMP_1_DN
+FL_1:
+	mov rax, 0
+	call stk_push
+CMP_1_DN:
+	call stk_pop
+	cmp rax, 0
+	je ELSE_1
+	mov rax, 1
+	call stk_push
+	jmp END_1
+ELSE_1:
+	mov rax, [rsp+0]
+	call stk_push
+	mov rax, 1
+	call stk_push
+	call stk_pop
+	mov rdi, rax
+	call stk_pop
+	sub rax, rdi
+	call stk_push
+	call FN_fib
+	mov rax, [rsp+0]
+	call stk_push
+	mov rax, 2
+	call stk_push
+	call stk_pop
+	mov rdi, rax
+	call stk_pop
+	sub rax, rdi
+	call stk_push
+	call FN_fib
+	call stk_pop
+	mov rdi, rax
+	call stk_pop
+	add rax, rdi
+	call stk_push
+END_1:
+	mov rsp, rbp
+	pop rbp
+	ret
+FN_add:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 16
+	call stk_pop
+	mov [rsp+0], rax
+	call stk_pop
+	mov [rsp+8], rax
+	mov rax, [rsp+8]
+	call stk_push
+	mov rax, [rsp+0]
+	call stk_push
+	call stk_pop
+	mov rdi, rax
+	call stk_pop
+	add rax, rdi
+	call stk_push
+	mov rsp, rbp
+	pop rbp
+	ret
+FN_main:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 0
+	mov rax, 10
+	call stk_push
+	call FN_factorial
+	call stk_pop
+	mov rdi, rax
+	call print_int
+	mov rax, 10
+	call stk_push
+	call FN_fib
+	call stk_pop
+	mov rdi, rax
+	call print_int
+	mov rax, 34
+	call stk_push
+	mov rax, 35
+	call stk_push
+	call FN_add
+	call stk_pop
+	mov rdi, rax
+	call print_int
+	mov rax, 0
+	call stk_push
 	mov rsp, rbp
 	pop rbp
 	ret

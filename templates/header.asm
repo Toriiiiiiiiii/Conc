@@ -107,6 +107,17 @@ _start:
 	push rbp
 	mov rbp, rsp
 
+	call FN_main
+
+	call stk_pop
+	mov rdi, rax
+	mov rax, 60
+	syscall
+	
+	mov rsp, rbp
+	pop rbp
+	ret
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; AUTO-GENERATED CODE
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -4,6 +4,14 @@
 
 #include "../common/parser.h"
 
+struct _variable_t
+{
+	char *identifier;
+	uint64_t stack_offset;
+};
+
+typedef struct _variable_t variable_t;
+
 struct _asmgen_t
 {
 	operation_t *root;
