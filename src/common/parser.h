@@ -15,6 +15,7 @@ enum _operation_type_t
 	OPR_ASSIGN,
 	OPR_IF,
 	OPR_PUSH_STRING,
+	OPR_SYSCALL
 };
 
 typedef enum _operation_type_t operation_type_t;

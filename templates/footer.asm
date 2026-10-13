@@ -39,7 +39,7 @@ stk_pop:
 	pop rbp
 	ret
 
-section '.data' writeable
+section .data
 
-stk: rq 65536
+stk: resq 65536
 stk_ptr: dq 0

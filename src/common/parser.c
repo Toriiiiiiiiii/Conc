@@ -103,6 +103,18 @@ operation_t _if(parser_t *par, operation_t *parent, token_t t)
 	return o;
 }
 
+operation_t _syscall(parser_t *par, operation_t *parent, token_t t)
+{
+	operation_t o = (operation_t){
+		t.file, t.line, t.col, OPR_SYSCALL,
+		t.len, t.value, parent, da_create(operation_t)
+	};
+
+	_parse(par, &o);
+
+	return o;
+}
+
 int _parse(parser_t *par, operation_t *parent)
 {
 	token_t t = _consume(par);
@@ -138,10 +150,17 @@ int _parse(parser_t *par, operation_t *parent)
 			};
 			break;
 		case TOK_UNARY:
-			opr = (operation_t){
-				t.file, t.line, t.col, OPR_UNARY,
-				t.len, t.value, parent, da_create(operation_t)
-			};
+			switch(t.value[0]) {
+				case '$':
+					opr = _syscall(par, parent, t);
+					break;
+				default:
+					opr = (operation_t){
+						t.file, t.line, t.col, OPR_UNARY,
+						t.len, t.value, parent, da_create(operation_t)
+					};
+					break;
+			}
 			break;
 		case TOK_PRINT:
 			opr = (operation_t){

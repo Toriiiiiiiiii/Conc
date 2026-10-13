@@ -13,6 +13,8 @@ asmgen_t *create_generator(operation_t *program, char *path)
 	g->ifs = 0;
 	g->cmps = 0;
 
+	g->str = da_create(char*);
+
 	g->file = fopen(path, "w");
 	return g;
 }
@@ -132,6 +134,9 @@ void _trans_node(asmgen_t *g, operation_t opr, dynamic_array_t vars)
 			case '@':
 				sprintf(buf, "\tcall stk_pop\n");
 				break;
+			case '#':
+				sprintf(buf, "\tcall stk_pop\n\tmov rsi, rax\n\txor rax, rax\n\tmov al, [rsi]\n\tcall stk_push\n");
+				break;
 		}
 
 		fwrite(buf, 1, strlen(buf), g->file);
@@ -233,6 +238,37 @@ void _trans_node(asmgen_t *g, operation_t opr, dynamic_array_t vars)
 				break;
 			}
 		}
+	} else if(opr.type == OPR_PUSH_STRING)
+	{
+		size_t stringID = g->str.nmem;
+		da_push(g->str, opr.value, char*);
+
+		char *buf = malloc(16777216);
+		sprintf(buf, "\tmov rax, STR_%lu\n\tcall stk_push\n", stringID);
+		fwrite(buf, 1, strlen(buf), g->file);
+		free(buf);
+	} else if(opr.type == OPR_SYSCALL)
+	{
+		operation_t code = da_peek(opr.children, 0, operation_t);
+		if(code.type != OPR_PUSH_INT) {
+			printf("[ERROR] Invalid syscall code.\n");
+			return;
+		}
+
+		size_t c = atol(code.value);
+
+		char *buf = malloc(16777216);
+		switch(c)
+		{
+			case 1:
+				sprintf(buf, "\tcall stk_pop\n\tmov rdi, rax\n\tcall stk_pop\n\tmov rdx, rax\n\tcall stk_pop\n\tmov rsi, rax\n\tmov rax, 1\n\tsyscall\n");
+				break;
+			default:
+				printf("[ERROR] Invalid syscall code.\n");
+				return;
+		}
+		fwrite(buf, 1, strlen(buf), g->file);
+		free(buf);
 	}
 }
 
@@ -272,4 +308,27 @@ void translate(asmgen_t *g)
 
 	char *footer = readFile("templates/footer.asm", &size);
 	fwrite(footer, 1, strlen(footer), g->file);
+
+	for(int i = 0; i < g->str.nmem; ++i)
+	{
+		char *s = malloc(16777216);
+		sprintf(s, "STR_%d: db `", i);
+		fwrite(s, 1, strlen(s), g->file);
+
+		char *v = da_peek(g->str, i, char *);
+		for(int i = 0; i < strlen(v); ++i)
+		{
+			switch(v[i]) {
+				case '\n':
+					fwrite("\\n", 1, 2, g->file);
+					break;
+				default:
+					fwrite(&v[i], 1, 1, g->file);
+					break;
+			}
+		}
+
+		fwrite("`\n", 1, 2, g->file);
+		free(s);
+	}
 }

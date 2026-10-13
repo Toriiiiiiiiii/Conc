@@ -1,5 +1,4 @@
-format elf64
-section '.text' executable
+section .text
 
 ; Prints an integer from %rdi
 print_int:
@@ -101,7 +100,7 @@ print_int:
 	pop rbp
 	ret
 
-public _start
+global _start
 
 _start:
 	push rbp
@@ -121,13 +120,18 @@ _start:
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; AUTO-GENERATED CODE
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FN_factorial:
+FN_strlen:
 	push rbp
 	mov rbp, rsp
 	sub rsp, 8
 	call stk_pop
 	mov [rsp+0], rax
 	mov rax, [rsp+0]
+	call stk_push
+	call stk_pop
+	mov rsi, rax
+	xor rax, rax
+	mov al, [rsi]
 	call stk_push
 	mov rax, 0
 	call stk_push
@@ -157,122 +161,52 @@ ELSE_0:
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
-	sub rax, rdi
+	add rax, rdi
 	call stk_push
-	call FN_factorial
-	mov rax, [rsp+0]
+	call FN_strlen
+	mov rax, 1
 	call stk_push
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
-	mul rdi
+	add rax, rdi
 	call stk_push
 END_0:
 	mov rsp, rbp
 	pop rbp
 	ret
-FN_fib:
+FN_puts:
 	push rbp
 	mov rbp, rsp
-	sub rsp, 8
+	sub rsp, 0
 	call stk_pop
-	mov [rsp+0], rax
-	mov rax, [rsp+0]
 	call stk_push
-	mov rax, 2
 	call stk_push
-	call stk_pop
-	mov rdi, rax
-	call stk_pop
-	cmp rax, rdi
-	jge FL_1
-	mov rax, 1
-	call stk_push
-	jmp CMP_1_DN
-FL_1:
-	mov rax, 0
-	call stk_push
-CMP_1_DN:
-	call stk_pop
-	cmp rax, 0
-	je ELSE_1
-	mov rax, 1
-	call stk_push
-	jmp END_1
-ELSE_1:
-	mov rax, [rsp+0]
-	call stk_push
+	call FN_strlen
 	mov rax, 1
 	call stk_push
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
-	sub rax, rdi
-	call stk_push
-	call FN_fib
-	mov rax, [rsp+0]
-	call stk_push
-	mov rax, 2
-	call stk_push
+	mov rdx, rax
 	call stk_pop
-	mov rdi, rax
-	call stk_pop
-	sub rax, rdi
-	call stk_push
-	call FN_fib
-	call stk_pop
-	mov rdi, rax
-	call stk_pop
-	add rax, rdi
-	call stk_push
-END_1:
-	mov rsp, rbp
-	pop rbp
-	ret
-FN_add:
-	push rbp
-	mov rbp, rsp
-	sub rsp, 16
-	call stk_pop
-	mov [rsp+0], rax
-	call stk_pop
-	mov [rsp+8], rax
-	mov rax, [rsp+8]
-	call stk_push
-	mov rax, [rsp+0]
-	call stk_push
-	call stk_pop
-	mov rdi, rax
-	call stk_pop
-	add rax, rdi
-	call stk_push
+	mov rsi, rax
+	mov rax, 1
+	syscall
 	mov rsp, rbp
 	pop rbp
 	ret
 FN_main:
 	push rbp
 	mov rbp, rsp
-	sub rsp, 0
-	mov rax, 10
+	sub rsp, 8
+	mov rax, STR_0
 	call stk_push
-	call FN_factorial
 	call stk_pop
-	mov rdi, rax
-	call print_int
-	mov rax, 10
+	mov [rsp+0], rax
+	mov rax, [rsp+0]
 	call stk_push
-	call FN_fib
-	call stk_pop
-	mov rdi, rax
-	call print_int
-	mov rax, 34
-	call stk_push
-	mov rax, 35
-	call stk_push
-	call FN_add
-	call stk_pop
-	mov rdi, rax
-	call print_int
+	call FN_puts
 	mov rax, 0
 	call stk_push
 	mov rsp, rbp
@@ -319,7 +253,8 @@ stk_pop:
 	pop rbp
 	ret
 
-section '.data' writeable
+section .data
 
-stk: rq 65536
+stk: resq 65536
 stk_ptr: dq 0
+STR_0: db `Hello, World!\n`

@@ -1,5 +1,4 @@
-format elf64
-section '.text' executable
+section .text
 
 ; Prints an integer from %rdi
 print_int:
@@ -101,7 +100,7 @@ print_int:
 	pop rbp
 	ret
 
-public _start
+global _start
 
 _start:
 	push rbp

@@ -20,6 +20,8 @@ struct _asmgen_t
 	size_t ifs;
 	size_t cmps;
 
+	dynamic_array_t str;
+
 	char *outp_path;
 	FILE *file;
 };
