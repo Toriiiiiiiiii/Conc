@@ -120,26 +120,21 @@ _start:
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; AUTO-GENERATED CODE
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FN_strlen:
+FN_loop:
 	push rbp
 	mov rbp, rsp
-	sub rsp, 8
+	sub rsp, 0
+WHILE_0:
 	call stk_pop
-	mov [rsp+0], rax
-	mov rax, [rsp+0]
 	call stk_push
-	call stk_pop
-	mov rsi, rax
-	xor rax, rax
-	mov al, [rsi]
 	call stk_push
-	mov rax, 0
+	mov rax, 1000000
 	call stk_push
 	call stk_pop
 	mov rdi, rax
 	call stk_pop
 	cmp rax, rdi
-	jne FL_0
+	jge FL_0
 	mov rax, 1
 	call stk_push
 	jmp CMP_0_DN
@@ -149,13 +144,7 @@ FL_0:
 CMP_0_DN:
 	call stk_pop
 	cmp rax, 0
-	je ELSE_0
-	mov rax, 1
-	call stk_push
-	jmp END_0
-ELSE_0:
-	mov rax, [rsp+0]
-	call stk_push
+	je END_0
 	mov rax, 1
 	call stk_push
 	call stk_pop
@@ -163,50 +152,24 @@ ELSE_0:
 	call stk_pop
 	add rax, rdi
 	call stk_push
-	call FN_strlen
-	mov rax, 1
+	call stk_pop
+	call stk_push
 	call stk_push
 	call stk_pop
 	mov rdi, rax
-	call stk_pop
-	add rax, rdi
-	call stk_push
+	call print_int
+	jmp WHILE_0
 END_0:
-	mov rsp, rbp
-	pop rbp
-	ret
-FN_puts:
-	push rbp
-	mov rbp, rsp
-	sub rsp, 0
-	call stk_pop
-	call stk_push
-	call stk_push
-	call FN_strlen
-	mov rax, 1
-	call stk_push
-	call stk_pop
-	mov rdi, rax
-	call stk_pop
-	mov rdx, rax
-	call stk_pop
-	mov rsi, rax
-	mov rax, 1
-	syscall
 	mov rsp, rbp
 	pop rbp
 	ret
 FN_main:
 	push rbp
 	mov rbp, rsp
-	sub rsp, 8
-	mov rax, STR_0
+	sub rsp, 0
+	mov rax, 0
 	call stk_push
-	call stk_pop
-	mov [rsp+0], rax
-	mov rax, [rsp+0]
-	call stk_push
-	call FN_puts
+	call FN_loop
 	mov rax, 0
 	call stk_push
 	mov rsp, rbp
@@ -257,4 +220,3 @@ section .data
 
 stk: resq 65536
 stk_ptr: dq 0
-STR_0: db `Hello, World!\n`

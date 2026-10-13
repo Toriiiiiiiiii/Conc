@@ -1,4 +1,5 @@
 # Conc Fundamentals
+*[/](index.md)fundamentals*
 
 ## Concatenative Programming
 Concatenative programming is a subset of the Functional Programming paradigm. Programs are constructed by *concatenating* function calls to produce an output. For example, the basic Conc program `34 35 +` is a concatenation of 3 functions:
@@ -17,6 +18,9 @@ Symbol/Name | Operation
 `<var>`     | Pushes the value of variable `<var>` onto the stack
 `.`         | Prints out the integer at the top of the stack
 `:`         | Duplicates the integer value on the top of the stack
+`@`         | Drops the value at the top of the stack
+`$<n>`      | Invokes Linux system call with code `<n>`.
+`#`         | Reads a byte value from memory and pushes it onto the stack
 `+`         | Adds the two integer values on the top of the stack
 `-`         | Subtracts the two integer values on the top of the stack
 `*`         | Multiplies the two integer values on the top of the stack

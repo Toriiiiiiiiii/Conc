@@ -1,17 +1,8 @@
-proc strlen do
-	-> s
-
-	?(s # 0 =) 1,
-	(s 1 + strlen 1 +)
-end
-
-proc puts do
-	:strlen 1 $1
+proc loop do
+	~(: 1000000 <) (1 + :.)
 end
 
 proc main do
-	"Hello, World!\n" -> str
-	str puts
-
+	0 loop
 	0
 end

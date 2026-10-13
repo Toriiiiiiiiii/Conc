@@ -14,6 +14,7 @@ enum _operation_type_t
 	OPR_PROC,
 	OPR_ASSIGN,
 	OPR_IF,
+	OPR_WHILE,
 	OPR_PUSH_STRING,
 	OPR_SYSCALL
 };

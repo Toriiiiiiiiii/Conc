@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+
 	lexer_t *lex = create_lexer(0, contents, size);
 	while(!lex_token(lex));
 

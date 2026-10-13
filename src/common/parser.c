@@ -103,6 +103,22 @@ operation_t _if(parser_t *par, operation_t *parent, token_t t)
 	return o;
 }
 
+operation_t _while(parser_t *par, operation_t *parent, token_t t)
+{
+	operation_t o = (operation_t){
+		t.file, t.line, t.col, OPR_WHILE,
+		0, NULL, parent, da_create(operation_t)
+	};
+
+	// Parse condition
+	_parse(par, &o);
+
+	// Parse body
+	_parse(par, &o);
+
+	return o;
+}
+
 operation_t _syscall(parser_t *par, operation_t *parent, token_t t)
 {
 	operation_t o = (operation_t){
@@ -170,6 +186,9 @@ int _parse(parser_t *par, operation_t *parent)
 			break;
 		case TOK_IF:
 			opr = _if(par, parent, t);
+			break;
+		case TOK_WHILE:
+			opr = _while(par, parent, t);
 			break;
 		case TOK_KEYWORD:
 			opr = _keyword(par, parent, t);

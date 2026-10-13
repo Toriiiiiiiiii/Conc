@@ -223,6 +223,36 @@ void _trans_node(asmgen_t *g, operation_t opr, dynamic_array_t vars)
 		free(buf);
 
 		g->ifs++;
+	} else if(opr.type == OPR_WHILE)
+	{
+		printf("Here\n");
+		char *label = malloc(16777216);
+		sprintf(label, "WHILE_%lu:\n", g->ifs);
+		fwrite(label, 1, strlen(label), g->file);
+		free(label);
+
+		_trans_node(g, da_peek(opr.children, 0, operation_t), vars);
+		
+		char *cond = "\tcall stk_pop\n\tcmp rax, 0\n";
+		fwrite(cond, 1, strlen(cond), g->file);
+
+		char *buf = malloc(16777216);
+		sprintf(buf, "\tje END_%lu\n", g->ifs);
+		fwrite(buf, 1, strlen(buf), g->file);
+		free(buf);
+
+		_trans_node(g, da_peek(opr.children, 1, operation_t), vars);
+		char *end = malloc(16777216);
+		sprintf(end, "\tjmp WHILE_%lu\n", g->ifs);
+		fwrite(end, 1, strlen(end), g->file);
+		free(end);
+
+		buf = malloc(16777216);
+		sprintf(buf, "END_%lu:\n", g->ifs);
+		fwrite(buf, 1, strlen(buf), g->file);
+		free(buf);
+
+		g->ifs++;
 	} else if(opr.type == OPR_ASSIGN)
 	{
 		variable_t var = {0};
@@ -299,6 +329,8 @@ void translate(asmgen_t *g)
 		sprintf(varalloc, "\tsub rsp, %lu\n", stack_offset);
 		fwrite(varalloc, 1, strlen(varalloc), g->file);
 		free(varalloc);
+
+		operation_t body = da_peek(opr.children, 0, operation_t);
 
 		_trans_node(g, da_peek(opr.children, 0, operation_t), vars);
 

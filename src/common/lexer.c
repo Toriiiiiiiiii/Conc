@@ -138,7 +138,7 @@ void lex_unary(lexer_t *lex)
 
 	int i = 0;
 	char c = lex->buffer[lex->offset];
-	while(lex->offset < lex->len && i < 24 && contains("#:@$!~", c))
+	while(lex->offset < lex->len && i < 24 && contains("#:@$!", c))
 	{
 		lex_consume(lex);
 		tok.value[i] = c;
@@ -217,11 +217,11 @@ int lex_token(lexer_t *lex)
 			lex_number(lex);
 			return 0;
 		}
-		else if(contains("+-*/&^><!~%=", c)) {
+		else if(contains("+-*/&^><!%=", c)) {
 			lex_operation(lex);
 			return 0;
 		}
-		else if(contains("#:@$!~", c)) {
+		else if(contains("#:@$!", c)) {
 			lex_unary(lex);
 			return 0;
 		}
@@ -251,6 +251,18 @@ int lex_token(lexer_t *lex)
 			tok.len = 0;
 			tok.value = NULL;
 			tok.type = TOK_IF;
+
+			da_push(lex->tokens, tok, token_t);
+		}
+		else if(c == '~') {
+			token_t tok = {0};
+
+			tok.file = lex->file;
+			tok.line = lex->line;
+			tok.col = lex->col;
+			tok.len = 0;
+			tok.value = NULL;
+			tok.type = TOK_WHILE;
 
 			da_push(lex->tokens, tok, token_t);
 		}

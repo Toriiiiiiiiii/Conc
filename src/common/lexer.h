@@ -15,6 +15,7 @@ enum _token_type_t
 	TOK_PRINT,
 	TOK_IF,
 	TOK_ELSE,
+	TOK_WHILE,
 	TOK_LPAREN,
 	TOK_RPAREN,
 	TOK_STRING,
