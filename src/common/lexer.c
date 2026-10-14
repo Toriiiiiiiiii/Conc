@@ -1,6 +1,21 @@
 #include "lexer.h"
 #include <ctype.h>
 
+/******************************************************************
+ *
+ * Lexer Helper Functions
+ *
+ *****************************************************************/
+
+/* create_lexer : Instantiate a lexer structure.
+ *   Parameters:
+ *     * file : Index of the file (see: file.h)
+ *     * buffer : Input string to analyse
+ *     * len : Length of the input string
+ *
+ *   Returns:
+ *     * Lexer structure with valid fields ready for analysis.
+ */
 lexer_t *create_lexer(size_t file, char *buffer, size_t len)
 {
 	lexer_t *lex = (lexer_t *)malloc(sizeof(lexer_t));
@@ -17,6 +32,11 @@ lexer_t *create_lexer(size_t file, char *buffer, size_t len)
 	return lex;
 }
 
+
+/* destroy_lexer : Frees up a lexer structure.
+ *    Parameters:
+ *      * lex : Lexer object to destroy
+ */
 void destroy_lexer(lexer_t *lex)
 {
 	if(lex->tokens.arrbase) {
@@ -29,6 +49,19 @@ void destroy_lexer(lexer_t *lex)
 	free(lex);
 }
 
+
+/* contains : Determins if a string contains a certain character.
+ *    Parameters:
+ *      * s : The string to search
+ *      * c : The character to find
+ *
+ *    Returns:
+ *      * 1 : If `s` contains `c`
+ *      * 0 : If `s` does not contain `c`
+ *
+ *    Notes:
+ *      * This is just a very basic linear search algorithm.
+ */
 int contains(char *s, char c)
 {
 	for(int i = 0; i < strlen(s); ++i)
@@ -37,6 +70,18 @@ int contains(char *s, char c)
 	return 0;
 }
 
+
+/* lex_consume : Fetches the next character from a lexer's input and advances.
+ *    Parameters:
+ *      * lex : The lexer to advance.o
+ *
+ *    Returns:
+ *      * The next character from the input string
+ *
+ *    Notes:
+ *      * This function handles newlines, updating the `col` and `line` fields
+ *        of the lexer.
+ */
 char lex_consume(lexer_t *lex)
 {
 	char c = lex->buffer[lex->offset];
@@ -50,6 +95,25 @@ char lex_consume(lexer_t *lex)
 
 	return c;
 }
+
+
+/******************************************************************
+ *
+ * Lexical Analysis Functions
+ *
+ *****************************************************************/
+
+/* All of the functions within this section of the analysis perform
+ * very similar algorithms. They simply extract a string of characters
+ * from the source based on different conditions.
+ *
+ * Functions:
+ *   * lex_number : Extracts unsigned integers
+ *   * lex_keyword : Extracts c-style identifiers
+ *   * lex_operation : Extracts binary operators
+ *   * lex_unary : Extracts unary operators
+ *   * lex_string : Extracts a bounded c-style string.
+ */
 
 void lex_number(lexer_t *lex)
 {
@@ -76,6 +140,7 @@ void lex_number(lexer_t *lex)
 	da_push(lex->tokens, tok, token_t);
 }
 
+
 void lex_keyword(lexer_t *lex)
 {
 	token_t tok = {0};
@@ -100,6 +165,7 @@ void lex_keyword(lexer_t *lex)
 	tok.len = strlen(tok.value);
 	da_push(lex->tokens, tok, token_t);
 }
+
 
 void lex_operation(lexer_t *lex)
 {
@@ -126,6 +192,7 @@ void lex_operation(lexer_t *lex)
 	da_push(lex->tokens, tok, token_t);
 }
 
+
 void lex_unary(lexer_t *lex)
 {
 	token_t tok = {0};
@@ -150,6 +217,7 @@ void lex_unary(lexer_t *lex)
 	tok.len = strlen(tok.value);
 	da_push(lex->tokens, tok, token_t);
 }
+
 
 void lex_string(lexer_t *lex)
 {
@@ -181,10 +249,25 @@ void lex_string(lexer_t *lex)
 
 	tok.value[i] = 0;
 	tok.len = strlen(tok.value);
-	//tok.value = realloc(tok.value, tok.len + 1);
+	tok.value = realloc(tok.value, tok.len + 1);
 	da_push(lex->tokens, tok, token_t);
 	lex_consume(lex);
 }
+
+
+/* lex_token : Master function for lexical analysis
+ *    Parameters:
+ *      * lex : The lexer data structure to perform
+ *              analysis with.
+ *
+ *    Returns:
+ *      * 0 : If analysis is still ongoing
+ *      * 1 : If analysis is finished
+ *
+ *    Notes:
+ *      * This function is a mess D:
+ *        TODO: Tidy this shit up and use less if-else
+ */
 
 int lex_token(lexer_t *lex)
 {

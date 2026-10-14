@@ -12,14 +12,14 @@ parser_t *create_parser(dynamic_array_t tokens)
 	par->tokens = tokens;
 	par->root = (operation_t*)malloc(sizeof(operation_t));
 
-		par->root->file     = 0;
-		par->root->line     = 0;
-		par->root->col      = 0;
-		par->root->type     = OPR_CODE;
-		par->root->len      = 0;
-		par->root->value    = NULL;
-		par->root->parent   = NULL;
-		par->root->children = da_create(operation_t);
+	par->root->file     = 0;
+	par->root->line     = 0;
+	par->root->col      = 0;
+	par->root->type     = OPR_CODE;
+	par->root->len      = 0;
+	par->root->value    = NULL;
+	par->root->parent   = NULL;
+	par->root->children = da_create(operation_t);
 
 	par->offset = 0;
 
