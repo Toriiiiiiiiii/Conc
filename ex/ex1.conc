@@ -8,4 +8,6 @@ proc factorial do
 	,(n 1 - factorial n *)
 end
 
-10 factorial .
+proc main do
+	10 factorial .
+end

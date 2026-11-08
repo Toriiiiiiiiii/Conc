@@ -32,5 +32,7 @@ proc streq do
 	0
 end
 
-string string2 streq .
-string string streq .
+proc main do
+	string string2 streq .
+	string string streq .
+end

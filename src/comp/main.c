@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
 	if(!contents)
 	{
-		perror("conci");
+		perror("concc");
 		return 1;
 	}
 
@@ -37,14 +37,30 @@ int main(int argc, char **argv)
 	int res = 0;
 	while(!(res = parse_opr(par)));
 
-	if(res == 2) return 1;
+	if(res == 2) {
+		printf("[CONCC] Parser error.\n");
+		return 1;
+	}
 
-	asmgen_t *g = create_generator(par->root, argv[2]);
+	asmgen_t *g = create_generator(par->root, "a.s");
 	translate(g);
 
 	destroy_lexer(lex);
 	destroy_parser(par);
 	destroy_generator(g);
 	free(contents);
+
+	char buf[256] = {0};
+	sprintf(buf, "nasm -felf64 a.s -o %s", argv[2]);
+	printf("%s\n", buf);
+	res = system(buf);
+
+	if(!res) {
+		system("rm a.s");
+	} else {
+		printf("[CONCC] An error occured.\n");
+		return 1;
+	}
+
 	return 0;
 }

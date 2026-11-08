@@ -1,8 +1,18 @@
-proc loop do
-	~(: 1000000 <) (1 + :.)
+proc strlen do
+	-> s
+
+	?(s # 0 =) 1,
+	(s 1 + strlen 1 +)
+end
+
+proc puts do
+	; Get length of the string
+	: strlen
+
+	; Output to FD 1 (stdout)
+	1 $1
 end
 
 proc main do
-	0 loop
-	0
+	"Hello World!\n" puts
 end
