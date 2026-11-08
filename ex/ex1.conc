@@ -4,7 +4,6 @@ proc factorial do
 
 	; If n == 0, return 1
 	?(n 0 =) 1
-
 	; Otherwise, return n * (n-1)!
 	,(n 1 - factorial n *)
 end
